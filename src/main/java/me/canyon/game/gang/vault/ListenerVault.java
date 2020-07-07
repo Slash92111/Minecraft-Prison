@@ -1,20 +1,19 @@
 package me.canyon.game.gang.vault;
 
 import me.canyon.Main;
-import me.canyon.database.MongoDB;
 import me.canyon.game.gang.Gang;
 
-import org.bson.Document;
-import org.bukkit.Bukkit;
+import me.canyon.game.player.PlayerData;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,20 +29,19 @@ public class ListenerVault implements Listener {
 
     public ListenerVault(Main plugin) { this.plugin = plugin; }
 
-    public HashMap<Player, InventoryView> hasInventoryOpen = new HashMap<>();
+    HashMap<Player, InventoryView> hasInventoryOpen = new HashMap<>();
 
-    public int getGangIDFromItem(ItemStack item) {
-        if (item != null)
-            if (item.getType().equals(Material.CHEST))
-                if (item.hasItemMeta())
-                    if (item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null)
-                        for (String string : item.getItemMeta().getLore())
-                            if (string.contains(ChatColor.DARK_GRAY + "ID: "))
-                                return Integer.parseInt(ChatColor.stripColor(string.split(" ")[1]));
-        return 0;
+    String getNBTTag(ItemStack item, String key) {
+        if (item != null) {
+            net.minecraft.server.v1_15_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+
+            if (nmsStack.hasTag())
+                return nmsStack.getTag().getString(key);
+        }
+        return "";
     }
 
-    public void syncVaultPage(Gang gang, int page) {
+    void syncVaultPage(Gang gang, int page) {
         Iterator<Map.Entry<Player, InventoryView>> iterator = this.hasInventoryOpen.entrySet().iterator();
 
         int ID = gang.getID();
@@ -56,7 +54,7 @@ public class ListenerVault implements Listener {
                 String inventoryName = inventory.getTitle();
 
                 if (inventoryName.contains(ChatColor.GRAY + "Vault")) {
-                    int inventoryID = getGangIDFromItem(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5));
+                    int inventoryID = Integer.parseInt(getNBTTag(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "gang_id"));
                     if (inventoryID != 0)
                         if (inventoryID == ID) {
                             int currentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", ""));
@@ -78,7 +76,7 @@ public class ListenerVault implements Listener {
         String inventoryName = inventory.getTitle();
 
         if (inventoryName.contains(ChatColor.GRAY + "Vault")) {
-            int ID = getGangIDFromItem(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5)); //Returns 0 if it doesn't have the ID
+            int ID = Integer.parseInt(getNBTTag(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "gang_id"));
 
             if (ID != 0) {
                 int currentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", "")); //Strips a-z, A-Z, and spaces
@@ -99,7 +97,7 @@ public class ListenerVault implements Listener {
                                 String otherInventoryName = otherInventory.getTitle();
 
                                 if (otherInventoryName.contains(ChatColor.GRAY + "Vault")) {
-                                    int otherID = getGangIDFromItem(otherInventory.getTopInventory().getItem(otherInventory.getTopInventory().getSize() - 5));
+                                    int otherID = Integer.parseInt(getNBTTag(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "gang_id"));
 
                                     if (otherID != 0) {
                                         int otherCurrentPage = Integer.parseInt(ChatColor.stripColor(otherInventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", ""));
@@ -144,76 +142,76 @@ public class ListenerVault implements Listener {
         InventoryView inventory = event.getView();
         String inventoryName = inventory.getTitle();
         Player player = (Player) event.getWhoClicked();
+        PlayerData playerData = plugin.getPlayerData(player);
 
         boolean admin = false;
 
         if (inventoryName.contains(ChatColor.GRAY + "Vault")) {
             ItemStack information = inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5);
+            Gang gang = null;
 
-            Gang gang = plugin.getPlayerData(player).getGang();
+            if (playerData.getGangID() != 0)
+                gang = plugin.getPlayerData(player).getGang();
 
-            if (information != null)
-                if (information.getType().equals(Material.CHEST))
-                    if (information.hasItemMeta())
-                        if (information.getItemMeta().hasDisplayName())
-                            if (information.getItemMeta().getDisplayName().contains(ChatColor.DARK_PURPLE + "Gang")) {
-                                MongoDB mongoDB = plugin.getMongoDBInstance();
-                                Document document = mongoDB.getDocument("gang", "NAME", ChatColor.stripColor(information.getItemMeta().getDisplayName().split(":")[1].replace(" ", "")));
+            if (information != null) {
 
-                                if (document != null) {
-                                    int ID = document.getInteger("ID");
+                int ID = Integer.parseInt(getNBTTag(information, "gang_id"));
 
-                                    if (!plugin.hasGangData(ID))
-                                        plugin.setGangData(ID, new Gang(ID));
+                if (!plugin.hasGangData(ID))
+                    plugin.setGangData(ID , new Gang(ID));
 
-                                    gang = plugin.getGangData(ID);
-                                    admin = true;
+                gang = plugin.getGangData(ID);
+                admin = Boolean.parseBoolean(getNBTTag(information, "admin"));
+            }
 
-                                }
-                            }
+            if (gang != null) {
+                Vault vault = gang.getVault();
+                ItemStack clickedItem = event.getCurrentItem();
 
+                int currentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s",""));
 
-            Vault vault = gang.getVault();
-            ItemStack clickedItem = event.getCurrentItem();
+                syncInventory(player, inventory);
 
-            int currentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s",""));
+                if (clickedItem != null && (clickedItem.getType().equals(Material.ARROW) || clickedItem.getType().equals(Material.CHEST) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)))
+                    if (inventoryName.contains(ChatColor.GRAY + "Vault Page")) {
 
-            syncInventory(player, inventory);
+                        String id = getNBTTag(clickedItem, "id");
 
-            if (clickedItem != null && (clickedItem.getType().equals(Material.ARROW) || clickedItem.getType().equals(Material.CHEST) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)))
-                if (inventoryName.contains(ChatColor.GRAY + "Vault Page")) {
-
-                    if (clickedItem.hasItemMeta())
-                        if (clickedItem.getItemMeta().hasDisplayName())
-                            if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "Next Page ->")) { //save page first
+                        switch(id) {
+                            case "next":
                                 vault.open(currentPage + 1, player, admin);
-                                event.setCancelled(true);
-                            } else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "<- Previous Page")) {
+                                break;
+                            case "prev":
                                 vault.open(currentPage - 1, player, admin);
-                                event.setCancelled(true);
-                            } else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GRAY + "Empty"))
-                                event.setCancelled(true);
-                            else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.DARK_PURPLE + "Upgrade Vault Size")) {
+                                break;
+                            case "upgrade":
+                                // Prevent an admin from 'upgrading' the vault
+                                if (admin)
+                                    return;
+
+                                // Making sure that the player is either a officer or the leader of the gang to upgrade
                                 if (gang.getOfficers().contains(player.getUniqueId().toString()) || gang.getLeader().equals(player.getUniqueId())) {
+                                    // Making sure they have enough money in the gangs balance to upgrade
                                     if (gang.getBalance() >= vault.getUpgradeCost()) {
                                         if (!vault.isMaxed()) {
                                             gang.setBalance(gang.getBalance() - vault.getUpgradeCost());
                                             vault.upgrade(inventory);
-                                            vault.open(currentPage, player, admin);
+                                            vault.open(currentPage, player, false);
                                             syncInventory(player, player.getOpenInventory());
                                         }
                                     } else
                                         player.sendMessage(plugin.getMessageFromConfig("gang.notEnoughMoney"));
                                 } else
                                     player.sendMessage(plugin.getMessageFromConfig("gang.needToBeOfficerToUpgrade"));
-
-                                event.setCancelled(true);
-                            } else if (clickedItem.getItemMeta().getDisplayName().contains(ChatColor.DARK_PURPLE + "Gang:"))
-                                event.setCancelled(true);
-                            else {
+                                break;
+                            default:
                                 gang.getVault().savePage(currentPage, inventory.getTopInventory());
-                            }
-                }
+                                break;
+                        }
+
+                        event.setCancelled(true);
+                    }
+            }
         }
     }
 
@@ -227,29 +225,15 @@ public class ListenerVault implements Listener {
 
         // Making sure the player is in a Gang 'Vault'
         if (inventoryName.contains(ChatColor.GRAY + "Vault")) {
-            Gang gang = plugin.getPlayerData(player).getGang();
+            // Getting the gang id from the 'upgrade' button
+            int ID = Integer.parseInt(getNBTTag(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "gang_id"));
 
-            //TODO change to NBT tag
-            ItemStack information = inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5);
+            // Loading the gang locally if it isn't already
+            if (!plugin.hasGangData(ID))
+                plugin.setGangData(ID, new Gang(ID));
 
-            if (information != null)
-                if (information.getType().equals(Material.CHEST)) {
-                    if (information.hasItemMeta())
-                        if (information.getItemMeta().hasDisplayName())
-                            if (information.getItemMeta().getDisplayName().contains(ChatColor.DARK_PURPLE + "Gang")) {
-                                MongoDB mongoDB = plugin.getMongoDBInstance();
-                                Document document = mongoDB.getDocument("gang", "NAME", ChatColor.stripColor(information.getItemMeta().getDisplayName().split(":")[1].replace(" ", "")));
+            Gang gang = plugin.getGangData(ID);
 
-                                if (document != null) {
-                                    int ID = document.getInteger("ID");
-
-                                    if (!plugin.hasGangData(ID))
-                                        plugin.setGangData(ID, new Gang(ID));
-
-                                    gang = plugin.getGangData(ID);
-                                }
-                            }
-                }
 
             // Remove all letters and spaces, split at '/', and grab the first int args (Inventory name Ex: 'Vault Page 1/2'
             int currentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", ""));

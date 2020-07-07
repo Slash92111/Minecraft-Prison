@@ -3,9 +3,11 @@ package me.canyon.game.gang.vault;
 import me.canyon.Main;
 import me.canyon.game.gang.Gang;
 import me.canyon.util.Utilities;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -63,7 +65,7 @@ public class Vault {
     /*
     Converts an Inventory Object to a string for storage in the MongoDB
      */
-    public String sterilize(Inventory inventory) {
+    String sterilize(Inventory inventory) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
@@ -84,7 +86,7 @@ public class Vault {
     /*
     Converts a string to an Inventory Object
      */
-    public Inventory deserialize(String string, int pageNumber) {
+    private Inventory deserialize(String string, int pageNumber) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(string));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
@@ -113,11 +115,11 @@ public class Vault {
 
     public int getTotalRows() { return this.totalRows; }
 
-    public Inventory getPage(int page) { return pages.get(page); }
+    Inventory getPage(int page) { return pages.get(page); }
 
     public void update(int page, Inventory inventory) { this.pages.replace(page, inventory); }
 
-    public void savePage(int page, Inventory inventory) {
+    void savePage(int page, Inventory inventory) {
         Inventory temp = Bukkit.createInventory(null, inventory.getSize() - 9);
 
         for (int i = 0; i < temp.getSize(); i++)
@@ -129,9 +131,9 @@ public class Vault {
         update(page, temp);
     }
 
-    public boolean isMaxed() { return (gang.getMaxVaultPages() * 5) == this.totalRows; }
+    boolean isMaxed() { return (gang.getMaxVaultPages() * 5) == this.totalRows; }
 
-    public String getNextSize() {
+    private String getNextSize() {
         int upgraded = this.totalRows + 1;
         int maxRowsPerPage = 5;
         int maxPages = gang.getMaxVaultPages();
@@ -142,7 +144,7 @@ public class Vault {
             return "Maxed Size";
     }
 
-    public int getUpgradeCost() {
+    int getUpgradeCost() {
         if (!getNextSize().equalsIgnoreCase("maxed size"))
             return (this.totalRows + 1) * this.upgradeCost;
 
@@ -153,7 +155,7 @@ public class Vault {
         player.openInventory(new VaultUI(page, this, admin).getInventory());
     }
 
-    public void upgrade(InventoryView inventory) {
+    void upgrade(InventoryView inventory) {
         int currentPage = Integer.parseInt(ChatColor.stripColor(inventory.getTitle()).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", "")); //Strips a-z, A-Z, and spaces
 
         // Verify that the vault is not maxed out on pages/rows already
@@ -227,7 +229,7 @@ public class Vault {
         }
     }
 
-    public void sendPageUpdate(int page) {
+    private void sendPageUpdate(int page) {
         // Grab all players that currently have an inventory open
         Iterator<Map.Entry<Player, InventoryView>> iterator = Main.getInstance().getListenerVaultInstance().hasInventoryOpen.entrySet().iterator();
 
@@ -243,8 +245,7 @@ public class Vault {
                 // Making sure they have a gang 'Vault' open
                 if (inventoryName.contains(ChatColor.GRAY + "Vault")) {
                     // Grab the Gang ID from the chest in the middle of the bottom row of the inventory
-                    //TODO Change to NBT tags rather than lore
-                    int inventoryID = Main.getInstance().getListenerVaultInstance().getGangIDFromItem(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5));
+                    int inventoryID = Integer.parseInt(Main.getInstance().getListenerVaultInstance().getNBTTag(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "gang_id"));
 
                     // Making sure that the Gang ID isn't 0 and that it matches this Gangs ID
                     if (inventoryID != 0)
@@ -299,15 +300,15 @@ public class Vault {
 
         private boolean admin; //TODO Finish implementing
 
-        public VaultUI(int page, Vault vault, boolean admin) {
+        VaultUI(int page, Vault vault, boolean admin) {
             this.page = page;
             this.admin = admin;
 
             // Add a row to the inventory for the controls
             this.inventory = Bukkit.createInventory(null, vault.getPage(page).getSize() + 9, ChatColor.GRAY + "Vault Page " + page + "/" + vault.numberOfPages);
 
-            if (!admin)
-                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Upgrade Vault Size", new String[] {
+            if (!admin) {
+                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Upgrade Vault Size", new String[]{
                         ChatColor.GRAY + "Click to upgrade vault size",
                         "",
                         ChatColor.YELLOW + "Current Size:",
@@ -317,17 +318,19 @@ public class Vault {
                         ChatColor.GRAY + "Rows: " + ChatColor.GREEN + vault.getNextSize(),
                         "",
                         ChatColor.GRAY + "Cost: " + ChatColor.GOLD + new Utilities().formatEconomy(Long.parseLong(vault.getUpgradeCost() + "")),
-                        "",
-                        ChatColor.DARK_GRAY + "ID: " + vault.gang.getID() //TODO Put this as an NBT tag rather than in the lore
                 });
-            else
-                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Gang: " + vault.gang.getName(), new String[] {
-                        ChatColor.DARK_GRAY + "ID: " + vault.gang.getID()
-                });
+            } else {
+                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Gang: " + vault.gang.getName(), null);
+                this.UPGRADE = setNBTTag(this.UPGRADE, "admin", "true");
+            }
 
-            this.NEXT_PAGE = createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "Next Page ->", null);
+            // Set the NBT tag for gang ID onto the 'upgrade' chest
+            this.UPGRADE = setNBTTag(this.UPGRADE, "id", "upgrade");
+            this.UPGRADE = setNBTTag(this.UPGRADE, "gang_id", vault.gang.getID() + "");
 
-            this.PREV_PAGE = createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "<- Previous Page", null);
+            this.NEXT_PAGE = setNBTTag(createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "Next Page ->", null), "id", "next");
+
+            this.PREV_PAGE = setNBTTag(createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "<- Previous Page", null), "id", "prev");
 
             // Set the vault controls on the bottom row of the inventory
             ItemMeta meta = PLACE_HOLDER.getItemMeta();
@@ -371,6 +374,14 @@ public class Vault {
 
             item.setItemMeta(im);
             return item;
+        }
+
+        private ItemStack setNBTTag(ItemStack item, String tag, String value) {
+            net.minecraft.server.v1_15_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+            NBTTagCompound tagCompound = nmsItem.getOrCreateTag();
+            tagCompound.setString(tag, value);
+            nmsItem.setTag(tagCompound);
+            return CraftItemStack.asBukkitCopy(nmsItem);
         }
     }
 }

@@ -337,7 +337,7 @@ public class Kit {
      * @return Returns a formatted date in a string
      */
     public String getCooldownLeft(Player player, String kitID) {
-        String timeLeft = "";
+        String timeLeft;
 
         Date expires = plugin.getPlayerData(player).getKitCooldown(kitID);
         Date currentTime = new Date();
