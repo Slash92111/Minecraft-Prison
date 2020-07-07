@@ -183,10 +183,10 @@ public class Vault {
 
                 ListenerVault listenerVault = Main.getInstance().getListenerVaultInstance();
                 // Grab the latest player sync (Which would be the latest save of the inventory)
-                listenerVault.syncVaultPage(this.gang, this.numberOfPages);
+                listenerVault.setLatestVersion(this.gang, this.numberOfPages);
                 // Send all players that have
                 sendPageUpdate(this.numberOfPages - 1); //Send them the inventory update
-                listenerVault.syncVaultPage(this.gang, this.numberOfPages); //Sync/save the updated inventory
+                listenerVault.setLatestVersion(this.gang, this.numberOfPages); //Sync/save the updated inventory
 
             } else { //Upgrade page
                 if (currentPage == this.numberOfPages) { //If they're on their last page and trying to upgrade it
@@ -206,7 +206,7 @@ public class Vault {
                     Inventory tempInventory = Bukkit.createInventory(null, pages.get(this.numberOfPages).getSize() + 9); //Add the new row since this DOESN'T have the control bar
 
                     ListenerVault listenerVault = Main.getInstance().getListenerVaultInstance();
-                    listenerVault.syncVaultPage(this.gang, this.numberOfPages);
+                    listenerVault.setLatestVersion(this.gang, this.numberOfPages);
 
                     Inventory pageInventory = pages.get(this.numberOfPages);
 
@@ -223,7 +223,7 @@ public class Vault {
 
                     sendPageUpdate(this.numberOfPages);
 
-                    listenerVault.syncVaultPage(this.gang, this.numberOfPages);
+                    listenerVault.setLatestVersion(this.gang, this.numberOfPages);
                 }
             }
         }
