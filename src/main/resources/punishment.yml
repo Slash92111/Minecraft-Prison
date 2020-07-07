@@ -1,0 +1,32 @@
+#
+# Punishment Configuration File
+#
+
+mute:
+  racism: "30 minute"
+  spamming: "30 minute"
+  sexualHarassment: "30 minute"
+  bullying: "30 minute"
+  verbalAbuse: "30 minute"
+  negativeBehaviour: "30 minute"
+tempBan:
+  racism: "1 day"
+  spamming: "1 day"
+  sexualHarassment: "1 day"
+  bullying: "1 day"
+  verbalAbuse: "1 day"
+  negativeBehaviour: "1 day"
+  inappropriateSkin: "1 day"
+ban:
+  racism: ""
+  sexualHarassment: ""
+  bullying: ""
+  verbalAbuse: ""
+  inappropriateSkin: ""
+  hacking: ""
+  banEvasion: ""
+warning:
+  inappropriateSkin: "00:00:00:00"
+  spamming: "00:00:00:00"
+skinChange:
+  inappropriateSkin: ""

@@ -1,0 +1,161 @@
+rank:
+  #Variables: %player_name% %type% %rank%
+  set: "&7Set &f%player_name% %type% &7rank to &f%rank%"
+  #Variables: %rank% %key% %value%
+  update: "&7Updated %rank% %key% to %value%"
+  invalidColor: "&cInvalid color was used, set to default instead! (WHITE)"
+home:
+  #Variables: %home_name%
+  invalidName: "&cYou can't have '%home_name%' as a home name!"
+  #Variables: %max_homes%
+  maxHomes: "&cYou already have the max amount of homes at once! (%max_homes%)"
+  #Variables: %total_homes% %max_homes% %home_name%
+  addedHome: "&aAdded home '%home_name%'! you now have %total_homes%/%max_homes% homes!"
+  #Variables: %total_homes% %max_homes% %home_name%
+  removedHome: "&aRemoved home '%home_name%'! you now have %total_homes%/%max_homes% homes!"
+  doesntExist: "&cThat home doesn't exist!"
+  #Variables: %total_homes% %max_homes% %homes%
+  list: "&aHomes (%total_homes%/%max_homes%): %homes%"
+gang:
+  notTakingInvites: "&c%player_name% isn't currently taking gang invites!"
+  notEnoughMoney: "&cYour gang doesn't have enough money to upgrade the vault!"
+  needToBeOfficerToUpgrade: "&cYou need to be an officer or the leader of the gang to upgrade the vault!"
+  help: "&a&l──────────────────&2&l──────────\n &a&lGang Help\n \n&2/gang create &a- Create a gang for you and other players\n&2/gang invite &a- Invite a player to join your gang\n&2/gang uninvite &a- Uninvite a player from joining your gang\n&2/gang join &a- Join a gang that you've been invited to\n&2/gang decline &a- Decline an invitation to join a gang\n&2/gang promote &a- Promote someone to Officer in your gang\n&2/gang demote &a- Demote an Officer to a Member of your gang\n&2/gang kick &a- Kick a player from your gang\n&2/gang set &a- Change the name/description of your gang\n&2/gang info &a- View another gangs information\n&2/gang leave &a- Leave your current gang\n&2/gang disban &a- Disban your gang\n&2/gang deposit &a- Deposit money into the gangs bank\n \n&2&l──────────&a&l──────────────────"
+  #Variables: %gang_name% %description% %leader% %officers% %members% %balance%
+  information: "&a&l──────────────────&2&l──────────\n            &a&lGang &f&l%gang_name%\n \n&2Description: &f%description%\n&2Members: &a%leader%%officers%%members%\n&2Balance: &a%balance%\n \n&2&l──────────&a&l──────────────────"
+  #Variables: %player_name% %message%
+  message: "&2&lGANG &a%player_name%: &f%message%"
+  #Variables: %amount% %player_name%
+  deposited: "&2&lGANG &a%player_name% &fhas deposited &a%amount%&f into the gangs balance!"
+  mustBeLeaderToDisban: "&cYou must be the leader of the gang to disban it!"
+  #Variables: %gang_name%
+  hasDisbanned: "&c&l%gang_name% &r&chas been disbanned!"
+  #Variables: %player_name%
+  left: "&2&lGANG &a%player_name% &fhas left the gang!"
+  #Variables: %gang_name%
+  leave: "&7You've left gang %gang_name%!"
+  mustLeaveToDisban: "&cTo leave your own gang you must disban the gang! (/gang disban)"
+  #Variables: %description%
+  setDescription: "&2&lGANG &fThe gangs description has been updated to '&a%description%&f'"
+  #Variables: %name%
+  setName: "&2&lGANG &fThe gangs name has been changed to &a%name%"
+  gangDoesntExist: "&cGang %gang_name% doesn't exist!"
+  mustBeLeaderToDemote: "&cYou must be the leader of the gang to demote someone!"
+  #Variables: %player_name%
+  notOfficerAlready: "&c%player_name% isn't an officer already!"
+  #Variables: %player_name%
+  hasBeenDemoted: "&2&lGANG &a%player_name% &fhas been demoted from officer!"
+  mustBeLeaderToPromote: "&cYou must be the leader of the gang to promote someone!"
+  #Variables: %player_name%
+  hasBeenPromoted: "&2&lGANG &a%player_name% &fhas been promoted to officer!"
+  #Variables: %player_name%
+  alreadyOfficer: "&c%player_name% is already an officer in the gang!"
+  mustBeOfficerToKick: "&cYou must be an officer to kick a member from the gang!"
+  #Variables: %player_name%
+  isntInGang: "&c%player_name% isn't in the gang!"
+  mustBeLeaderToKickOfficer: "&cYou must be the gangs leader to kick an officer!"
+  #Varialbes: %player_name%
+  kickedFrom: "&2&lGANG &a%player_name% &fhas been kicked from the gang!"
+  #Variables: %gang_name%
+  declinedToJoin: "&7You've declined to join gang &f%gang_name%"
+  noInvite: "&cYou currently don't have an invite from that gang!"
+  #Variables: %player_name%
+  hasJoined: "&2&lGANG &a%player_name% &fhas joined the gang!"
+  mustLeaveToJoin: "&cYou must leave your current gang before joining another!"
+  mustBeOfficerToUninvite: "&cYou must be an OFFICER to invite people to the gang!"
+  mustBeOfficerToInvite: "&cYou must be an OFFICER to invite people to the gang!"
+  #Variables: %player_name%
+  invitedPlayer: "&f%player_name% &ahas been invited to join the gang!"
+  #Variables: %gang_name%
+  invitedToJoin: "&7You've been invited to join gang %gang_name%!\n&7Type /gang accept %gang_name% to join!"
+  #Variables: %name% %description%
+  create: "&7Created gang &f%name% &7with the description of &f%description"
+  alreadyExists: "&cThat gang already exists!"
+  mustLeaveToCreate: "&cYou must leave your current gang to create your own! (/gang leave)"
+  notInGang: "&cYou're not currently in a gang!"
+  #Variables: %player_name%
+  loginAlert: "&2&lGANG &a%player_name% &fhas come online"
+  #Variables: %player_name%
+  notAcceptingInvites: "&c%player_name% isn't currently taking guild invites!"
+privateMessage:
+  #Variables: %player_name%
+  doNotDisturb:  "&c%player_name% currently has private messages disabled!"
+  #Variables: %player_name% %message%
+  send: "&7&lTO %player_name%: &f%message%"
+  from: "&7&lFROM %player_name: &f%message%"
+mute:
+  #Variables: %expires% %reason%
+  setMuted: "&cYou've been muted!\n&7Reason: &f%reason%\n&7Expires: &f%expires%"
+  #Variables: %expires%, %reason%, %player_name%
+  mutedPlayer: "&cYou've muted %player_name%!\n&7Reason: &f%reason%\n&7Expires: &f%expires%"
+  #Variables: %reason% %expires$
+  currently: "&cYou're currently muted!\n&7Reason: &f%reason%\n&7Expires: &f%expires%"
+  canNotMuteStaff: "&cYou can't mute a staff member!"
+  #Variables:  %player_name%
+  unmutedPlayer: "&7You've unmuted &f%player_name%"
+  #Variables: %player_name%
+  notCurrentlyMuted: "&f%player_name% &7isn't currently muted!"
+  #Variables:
+  unmuted: "&7You're no longer muted!"
+player:
+  #Variables: %player_name%
+  playerIsntOnline: "&c%player_name% isn't currently online!"
+  playerDoesntExist: "&c%player_name%  doesn't exist in the database!"
+  reloadedData: "&aYour data has been reloaded!"
+  reloadedAnotherPlayersData: "&aReloaded %player_name%'s data!"
+  uploadData: "&aYour data has been uploaded to the database!"
+  #Variables: %player_name%
+  uploadedAnotherPlayersData: "&aUploaded %player_name% data to the database!"
+  notEnoughMoneyBackpack: "&cYou don't have enough money to upgrade your backpack!"
+command:
+  #Variables: %correct_usage%
+  correctUsage: "&cCorrect Usage: %correct_usage%"
+  reboot: "&cServer is rebooting!\n&7Your data has been saved!"
+ban:
+  cantBanStaff: "&cYou can't ban a staff member!"
+  #Variables: %who_banned% %reason%
+  kick: "&cYou've been permanently banned!\n&7By: &f%who_banned%\n&7Reason: &f%reason%"
+  #Variables: %player_name% %reason%
+  bannedPlayer: "&cYou've permanently banned %player_name%!\n&7Reason: &f%reason%"
+  #Variables: %player_name%
+  unban: "&7You've unbanned &f%player_name%&7!"
+  #Variables: %player_name%
+  notCurrentlyBanned: "&f%player_name% &7isn't currently banned!"
+database:
+  successfulBackup: "&aSuccessfully uploaded all local data!"
+discord:
+  alreadyLinked: "&cYour discord is already linked!"
+  successfullyLinked: "&aSuccessfully linked discord!"
+  wrongCode: "&cInvalid code! Double check you've entered the correct code!"
+tempban:
+  canNotBanStaff: "&cYou can't temp-ban a staff member!"
+  #Variables: %who_banned% %reason% %expires%
+  kick: "&cYou've been temp-banned!\n&7By: &f%who_banned%\n&7Reason: &f%reason%\n&7Expires: &f%expires%"
+  #Variables: %player_name% %reason% %expires%
+  set: "&cYou've temp-banned %player_name%!\n&7Reason: &f%reason%\n&7Expires: &f%expires%"
+report:
+  reportedWithDiscord: "&7Report: &f%report_id% &7 has been logged! You've been added to the ticket in discord!"
+  reported: "&7Report: &f%report_id% &7 has been logged for a staff member to review!"
+kit:
+  #Variables: %cooldown% = cooldown time, %kit% = kit name
+  redeemed: "&7You've redeemed your &l%kit%&r&7! (Cooldown: %cooldown%)"
+item:
+  #Variables: %amount%
+  backpackPageUpgradeItemUse: "&7Added %amount% row to your maximum amount of rows for your backpack!"
+  backpackMaxedOut: "&cYou've upgraded your backpack the maximum amount of times possible!"
+  #Variables: %kit_name%
+  gkitLevelUp: "&7Redeemed &f%kit_name% G-Kit &7 level up!"
+  #Variables: %kit_name%
+  gkitMaxLevel: "&cYour %kit_name% G-Kit is already maxed out!"
+  #Variables: %rank_name%
+  alreadyBetterRank: "&cYou already have a better rank than %rank_name%!"
+  #Variables: %rank_name%
+  redeemedRank: "&7You've redeemed Rank %rank_name%!"
+  #Variables: %kit_name%
+  currentlyOnCooldown: "&c%kit_name% is currently on cooldown!"
+friend:
+  pending: "&f%player_name% &7has requested to be friends! (Use /friend add %player_name% to accept)"
+  sent: "&7Sent &f%player_name% &7a friend request!"
+  declined: "&7You've declined &f%player_name% &7friend request!"
+  accepted: "&7You're now friends with &f%player_name%&7!"
+  removed: "&7You've removed 7f%player_name% &7from your friends list!"

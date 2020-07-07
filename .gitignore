@@ -1,0 +1,14 @@
+
+/target/API-1.0-SNAPSHOT.jar
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/target/*
+/src/main/resources/PlayerDefaults.yml
+/Minecraft.iml
+/.idea/uiDesigner.xml
+/.idea/vcs.xml
+/.idea/compiler.xml
+/.idea/encodings.xml
+/.idea/.gitignore
+/.idea/dictionaries/slash.xml
+/.idea/misc.xml

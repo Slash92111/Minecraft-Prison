@@ -1,0 +1,13 @@
+#
+# Database Configuration File
+#
+
+mongo:
+  connection_string: "mongodb+srv://minecraft:Minecraft!@cluster0-gthsk.gcp.mongodb.net/test?retryWrites=true&w=majority"
+  database: "minecraft"
+splunk:
+  host: "10.0.0.148"
+  username: "minecraft"
+  password: "Minecraft!"
+  scheme: "https"
+  port: 8089

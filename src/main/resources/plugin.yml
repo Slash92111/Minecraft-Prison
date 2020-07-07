@@ -1,0 +1,7 @@
+name: Test
+main: me.canyon.Main
+author: Slash9211
+version: 0.1
+description: Test plugin
+api-version: 1.13
+commands:

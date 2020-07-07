@@ -1,0 +1,74 @@
+#
+# Command Permission Configuration File
+#
+# About editing this file:
+# - Each rank that's hardcoded has a specified 'level'.
+#   Use that level for commands to allow them to use it.
+# - To allow anyone to use the command just put a 0
+#
+# Staff Rank levels:
+# - Jr. Helper = 1
+# - Helper     = 2
+# - Moderator  = 3
+# - Admin      = 4
+# - Developer  = 4
+# - Owner      = 4
+#
+# Donator Rank Levels:
+# - VIP   = 1
+# - VIP+  = 2
+# - MVP   = 3
+# - MVP+  = 4
+# - MVP++ = 5
+#
+
+# Staff Permission Levels
+staff:
+  # Removes currently loaded data and reloads the last data found on the database
+  reloadplayer: 3
+  # Permanently ban a player
+  ban: 3
+  # Temporarily bans a player for a specified amount of time
+  tempban: 2
+  # Removes a players temp/perm ban
+  unban: 3
+  # Mutes a player for a specified amount of time
+  mute: 1
+  # Removes a players mute
+  unmute: 1
+  # Manage a players staff/donator rank
+  rank: 4
+  # Upload a players local data to the database
+  upload: 3
+  # Access another players backpack and manage it
+  backpack: 3
+  # Backup all player/guild data to the database
+  backup: 3
+  # Stops the server
+  stop: 4
+  # Create items
+  item: 3
+  # Gang Vault override
+  vault: 3
+# Donator permission levels
+donator:
+  # Clears the players inventory
+  clearinventory: 1
+  # Sells the item(s) in the players hand
+  sellhand: 2
+  # Sells all items in the players inventory
+  sellall: 2
+  # Accepts a teleport request
+  tpa: 4
+  # Requests a player to teleport to them
+  tpahere: 4
+  # Fixes the item in the players hand
+  fix: 2
+  # Feeds the player to full hunger
+  feed: 1
+  # Tells the player how many players are nearby (100 radius)
+  near: 5
+  # Allows the player to set their nickname (No color codes)
+  nick: 3
+
+

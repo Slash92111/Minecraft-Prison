@@ -1,0 +1,68 @@
+# name
+# lore
+# material
+items:
+  backpack-upgrade-1:
+    name: "&a+1 &5Backpack Rows"
+    lore:
+      - "&7Hint: Right-click to permanently"
+      - "&7apply to your character"
+    material: "PAPER"
+    nbt:
+  backpack-upgrade-2:
+    name: "&a+2 &5Backpack Rows"
+    lore:
+      - "&7Hint: Right-click to permanently"
+      - "&7apply to your character"
+    material: "PAPER"
+    nbt:
+  backpack-upgrade-3:
+    name: "&a+3 &5Backpack Rows"
+    lore:
+      - "&7Hint: Right-click to permanently"
+      - "&7apply to your character"
+    material: "PAPER"
+    nbt:
+  rank-upgrade-vip:
+    name: "&6Player Rank (&aVIP&6)"
+    lore:
+      - "&7Right-Click to unlock access to"
+      - "&7the Player Rank &aVIP&7!"
+      - " "
+      - "&a* &f/rankkit &aVIP"
+      - "&a* &f3x /backpack rows"
+      - "&a* &f/food (25x saturation)"
+      - "&a* &f/sethome (3x homes)"
+    material: "NETHER_STAR"
+    nbt:
+      - "max-homes:3"
+      - "max-backpack-rows:0"
+      - "hardcap-backpack-rows:15"
+  tyler:
+    name: "&cTyler is NOT gay"
+    lore:
+      - "&aOnly on Tuesdays is this true"
+    material: "DIAMOND"
+    nbt:
+  kit-upgrade-test:
+    name: "&f&lTest &r&fG-Kit Level Up"
+    lore:
+      - " "
+      - "&7This item will level up the"
+      - "&7Test G-Kit on your account,"
+      - "&7improving the loot and cooldown time."
+      - " "
+      - "&7(Right-click to claim)"
+    material: "BEACON"
+    nbt:
+  kit-upgrade-inferas_kit:
+    name: "&4&lInfera's Kit &r&fG-Kit Level Up"
+    lore:
+      - " "
+      - "&7This item will level up the"
+      - "&7Infera's Kit G-Kit on your account,"
+      - "&7improving the loot and cooldown time."
+      - " "
+      - "&7(Right-click to claim)"
+    material: "BEACON"
+    nbt:

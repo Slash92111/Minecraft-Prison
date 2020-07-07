@@ -1,0 +1,280 @@
+#
+# Kits Configuration File
+#
+# About editing this file:
+# - Listed below are available variables that can be used
+# - 'enchants' for an item is ONLY custom enchants, NOT Minecrafts
+# - 'icon' is what item will show up for the GUI and is required for the kit to show up
+# - 'cooldown' is in the format of D:H:M:S
+#
+# Variables:
+#   Items:
+#     - CHEST: Will be replaced with their appropriate tier
+#     - LEGGINGS: Will be replaced with their appropriate tier
+#     - BOOTS: Will be replaced with their appropriate tier
+#     - HELMET: Will be replaced with their appropriate tier
+#     - SWORD: Will be replaced with their appropriate tier
+#     - PICKAXE: Will be replaced with their appropriate tier
+#   Levels:
+#     - 0: Will be replaced with an appropriate level based on their XP level
+#   Words:
+#     - %material%: Material name
+#     - %required_level%
+#
+# Example Kit:
+# game-kits: (game-kits OR rank-kits)
+#   example-name:
+#     cooldown: "0:0:1:0" (For rank-kits ONLY)
+#       1: "0:0:1:0" (For game-kits ONLY) (Level 1 cooldown, goes up to level 3)
+#     icon:
+#       name: "Example Kit"
+#       lore:
+#         - "Example kit icon"
+#       material: CHEST
+#     items:
+#       PAPER: (Material)
+#         name: "Example"
+#         enchants:
+#           - "CUSTOM_ENCHANT_NAME:0" (Enchant:Level)
+#         lore:
+#           - "This is an example kit"
+#       DIAMOND:
+#         name: "Diamond Example"
+#         lore:
+#           - "This is a free diamond!"
+#
+
+rank-kits:
+  vip:
+    cooldown: "0:0:1:0"
+    icon:
+      name: "&a&lVIP &r&aRank-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "CHEST_MINECART"
+    items:
+      HELMET:
+        name: "&a&lVIP &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      CHESTPLATE:
+        name: "&a&lVIP &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      LEGGINGS:
+        name: "&a&lVIP &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - ""
+          - "&eRequired Mining Level &f&l%required_level%"
+      BOOTS:
+        name: "&a&lVIP &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+  vip_plus:
+    cooldown: "0:0:1:0"
+    icon:
+      name: "&a&lVIP+ &r&aRank-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "CHEST_MINECART"
+    items:
+      HELMET:
+        name: "&a&lVIP+ &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      CHESTPLATE:
+        name: "&a&lVIP+ &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      LEGGINGS:
+        name: "&a&lVIP+ &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - ""
+          - "&eRequired Mining Level &f&l%required_level%"
+      BOOTS:
+        name: "&a&lVIP+ &r&a%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+  mvp:
+    cooldown: "0:0:1:0"
+    icon:
+      name: "&b&lMVP &r&bRank-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "CHEST_MINECART"
+    items:
+      HELMET:
+        name: "&b&lMVP &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      CHESTPLATE:
+        name: "&b&lMVP &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      LEGGINGS:
+        name: "&b&lMVP &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - ""
+          - "&eRequired Mining Level &f&l%required_level%"
+      BOOTS:
+        name: "&b&lMVP &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+  mvp_plus:
+    cooldown: "0:0:1:0"
+    icon:
+      name: "&b&lMVP+ &r&bRank-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "CHEST_MINECART"
+    items:
+      HELMET:
+        name: "&b&lMVP+ &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      CHESTPLATE:
+        name: "&b&lMVP+ &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      LEGGINGS:
+        name: "&b&lMVP+ &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - ""
+          - "&eRequired Mining Level &f&l%required_level%"
+      BOOTS:
+        name: "&b&lMVP+ &r&b%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+  mvp_plus_plus:
+    cooldown: "0:0:1:0"
+    icon:
+      name: "&6&lMVP++ &r&6Rank-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "CHEST_MINECART"
+    items:
+      HELMET:
+        name: "&6&lMVP++ &r&6%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      CHESTPLATE:
+        name: "&6&lMVP++ &r&6%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+      LEGGINGS:
+        name: "&6&lMVP++ &r&6%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - ""
+          - "&eRequired Mining Level &f&l%required_level%"
+      BOOTS:
+        name: "&6&lMVP++ &r&6%material%"
+        enchants:
+          - "Deflect:0"
+        lore:
+          - "&cMaximum level 41"
+          - " "
+          - "&eRequired Mining Level &f&l%required_level%"
+game-kits:
+  test:
+    cooldown:
+      1: "0:0:1:0"
+      2: "0:0:0:45"
+      3: "0:0:0:30"
+    icon:
+      name: "&cTest G-Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "ANVIL"
+    items:
+      DIAMOND:
+        name: "&aDiamond"
+        enchants:
+        lore:
+          - "&aTesting a diamond out"
+  inferas_kit:
+    cooldown:
+      1: "0:0:0:10"
+      2: "0:0:0:5"
+      3: "0:0:0:1"
+    icon:
+      name: "&4&lInfera's Kit"
+      lore:
+        - "&7(Right-click to preview)"
+      material: "WOODEN_HOE"
+    items:
+      APPLE:
+        name: "Aple"
+        enchants:
+        lore:
+          - "&7&kdo what ever"
