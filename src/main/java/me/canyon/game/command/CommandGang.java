@@ -495,7 +495,7 @@ public class CommandGang extends BaseCommand {
                             plugin.setGangData(ID, new Gang(ID));
 
                         Gang gang = plugin.getGangData(ID);
-                        gang.getVault().open(1, player, true);
+                        gang.getVault().open(1, player);
 
                         plugin.getSplunkInstance().log("staff", "Command", "Sender=" + player.getUniqueId().toString() + " | Command=gang vault | Target=" + args[1]);
 
@@ -510,7 +510,7 @@ public class CommandGang extends BaseCommand {
                 }
 
                 Gang gang = plugin.getGangData(playerData.getGangID());
-                gang.getVault().open(1, player, false);
+                gang.getVault().open(1, player);
             }
             else { // Gang talk
                 if (playerData.getGangID() == 0)

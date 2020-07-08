@@ -17,6 +17,7 @@ home:
   #Variables: %total_homes% %max_homes% %homes%
   list: "&aHomes (%total_homes%/%max_homes%): %homes%"
 gang:
+  inAdminMode: "&cYou're not in this gang so you can't upgrade their vault!"
   notTakingInvites: "&c%player_name% isn't currently taking gang invites!"
   notEnoughMoney: "&cYour gang doesn't have enough money to upgrade the vault!"
   needToBeOfficerToUpgrade: "&cYou need to be an officer or the leader of the gang to upgrade the vault!"
@@ -69,7 +70,7 @@ gang:
   #Variables: %gang_name%
   invitedToJoin: "&7You've been invited to join gang %gang_name%!\n&7Type /gang accept %gang_name% to join!"
   #Variables: %name% %description%
-  create: "&7Created gang &f%name% &7with the description of &f%description"
+  create: "&7Created gang &f%name% &7with the description of &f%description%"
   alreadyExists: "&cThat gang already exists!"
   mustLeaveToCreate: "&cYou must leave your current gang to create your own! (/gang leave)"
   notInGang: "&cYou're not currently in a gang!"
