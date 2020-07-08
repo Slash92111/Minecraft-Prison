@@ -56,7 +56,7 @@ public class CommandBackpack extends BaseCommand {
 
                 PlayerData targetData = plugin.getPlayerData(uuid);
 
-                targetData.getBackpack().open(1, player, true);
+                targetData.getBackpack().open(1, player);
 
                 plugin.getSplunkInstance().log("staff", "Command", "Sender=" + player.getUniqueId().toString() + " | Command=backpack | Target=" + uuid.toString());
 
@@ -65,7 +65,7 @@ public class CommandBackpack extends BaseCommand {
                 return false;
             }
         } else
-            plugin.getPlayerData(player).getBackpack().open(1, player, false);
+            plugin.getPlayerData(player).getBackpack().open(1, player);
 
 
         return true;
