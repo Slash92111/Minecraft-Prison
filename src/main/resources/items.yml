@@ -66,3 +66,10 @@ items:
       - "&7(Right-click to claim)"
     material: "BEACON"
     nbt:
+  why-not:
+    name: "&a&lWhy not?"
+    lore:
+      - " "
+      - "&7Why not just full send it bro?"
+    material: "PAPER"
+    nbt:
