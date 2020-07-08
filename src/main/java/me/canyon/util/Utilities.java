@@ -1,15 +1,27 @@
 package me.canyon.util;
 
 import me.canyon.Main;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Utilities {
+
+    public static ItemStack createItem(ItemStack item, String name, String[] lore) {
+        ItemMeta im = item.getItemMeta();
+        im.setDisplayName(name);
+
+        if (lore != null)
+            im.setLore(Arrays.asList(lore));
+
+        item.setItemMeta(im);
+        return item;
+    }
 
     public static int getRandomNumber(int min, int max) {
         return new Random().nextInt(max-min) + min;
