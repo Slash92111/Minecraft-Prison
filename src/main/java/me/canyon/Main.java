@@ -14,7 +14,7 @@ import me.canyon.game.item.Kit;
 import me.canyon.game.item.KitListener;
 import me.canyon.game.player.listener.Attack;
 import me.canyon.game.player.listener.Chat;
-import me.canyon.game.player.backpack.listener.ListenerBackpack;
+import me.canyon.game.player.backpack.ListenerBackpack;
 import me.canyon.game.player.PlayerData;
 import me.canyon.game.player.listener.Disconnect;
 import me.canyon.game.player.listener.Join;
@@ -56,6 +56,7 @@ public class Main extends JavaPlugin {
     private Kit kit;
 
     private ListenerVault listenerVault;
+    private ListenerBackpack listenerBackpack;
     private StaffUI staffUI;
 
     public void onEnable() {
@@ -77,6 +78,7 @@ public class Main extends JavaPlugin {
         kit = new Kit(this);
 
         listenerVault = new ListenerVault(this);
+        listenerBackpack = new ListenerBackpack(this);
         staffUI = new StaffUI(this);
 
         CommandManager commandManager = new CommandManager();
@@ -103,6 +105,7 @@ public class Main extends JavaPlugin {
         commandManager.registerCommand(new CommandGameKit("gamekit", "/command", "Opens the game kit UI"));
         commandManager.registerCommand(new CommandToggle("toggle", "/command", "Opens the toggle UI"));
         commandManager.registerCommand(new CommandFriend("friend", "/command", "Manage friends list"));
+        commandManager.registerCommand(new CommandPay("pay", "/pay PLAYER AMOUNT", "Send another player money in-game."));
 
         for (Rank rank : Rank.values())
             commandManager.registerCommand(new CommandRanks(rank.toString().toLowerCase(), "/<command> [args]", "Manage rank data", 3));
@@ -113,7 +116,7 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Join(this), this);
         getServer().getPluginManager().registerEvents(new Disconnect(this), this);
         getServer().getPluginManager().registerEvents(new Chat(this), this);
-        getServer().getPluginManager().registerEvents(new ListenerBackpack(this), this);
+        getServer().getPluginManager().registerEvents(listenerBackpack, this);
         getServer().getPluginManager().registerEvents(new Attack(this), this);
         getServer().getPluginManager().registerEvents(listenerVault, this);
         getServer().getPluginManager().registerEvents(new World(this), this);
@@ -256,6 +259,8 @@ public class Main extends JavaPlugin {
     public Kit getKitInstance() { return kit; }
 
     public ListenerVault getListenerVaultInstance() { return listenerVault; }
+
+    public ListenerBackpack getListenerBackpackInstance() { return listenerBackpack; }
 
     public StaffUI getStaffUI() { return staffUI; }
 

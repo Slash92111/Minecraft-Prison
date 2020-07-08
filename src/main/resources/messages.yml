@@ -99,6 +99,10 @@ mute:
   #Variables:
   unmuted: "&7You're no longer muted!"
 player:
+  notEnoughMoneyPay: "&cYou don't have enough money to send that amount!"
+  receivedMoney: "&7Received &a%amount% &7from &f%player_name%&7!"
+  sentMoney: "&7Sent &a%amount% &7to &f%player_name%&7!"
+  notYourBackpack: "&cYou can't upgrade someone else's backpack!"
   #Variables: %player_name%
   playerIsntOnline: "&c%player_name% isn't currently online!"
   playerDoesntExist: "&c%player_name%  doesn't exist in the database!"

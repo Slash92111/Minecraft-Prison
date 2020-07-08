@@ -1,5 +1,7 @@
 package me.canyon.game.player.backpack;
 
+import me.canyon.Main;
+import me.canyon.game.item.NBTTag;
 import me.canyon.game.player.PlayerData;
 import me.canyon.util.Utilities;
 import org.bukkit.Bukkit;
@@ -45,11 +47,11 @@ public class Backpack {
         if (backpackList != null && backpackList.size() != 0)
             for (int i = 0; i < backpackList.size(); i++) {
                 int page = i + 1;
-                pages.put(page, desteralize(backpackList.get(i), page));
+                pages.put(page, deserialize(backpackList.get(i), page));
             }
          else {
             Inventory inventory = Bukkit.getServer().createInventory(null, 9, "");
-            pages.put(1, desteralize(steralize(inventory), 1));
+            pages.put(1, deserialize(sterilize(inventory), 1));
         }
 
         this.numberOfPages = pages.size();
@@ -61,7 +63,7 @@ public class Backpack {
 
     public Player getOwner() { return Bukkit.getPlayer(uuid); }
 
-    private String steralize(Inventory inventory) {
+    String sterilize(Inventory inventory) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
@@ -79,7 +81,7 @@ public class Backpack {
         }
     }
 
-    private Inventory desteralize(String string, int pageNumber) {
+    private Inventory deserialize(String string, int pageNumber) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(string));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
@@ -106,6 +108,18 @@ public class Backpack {
     }
 
     public void update(int page, Inventory inventory) { this.pages.replace(page, inventory); }
+
+    void savePage(int page, Inventory inventory) {
+        Inventory temp = Bukkit.createInventory(null, inventory.getSize() - 9);
+
+        for (int i = 0; i < temp.getSize(); i++)
+            if (inventory.getItem(i) != null)
+                temp.setItem(i, inventory.getItem(i));
+            else
+                temp.setItem(i, new ItemStack(Material.AIR));
+
+        update(page, temp);
+    }
 
     public int getTotalRows() { return this.totalRows; }
 
@@ -137,6 +151,12 @@ public class Backpack {
                 this.numberOfPages += 1;
                 this.totalRows += 1;
 
+                ListenerBackpack listenerBackpack = Main.getInstance().getListenerBackpackInstance();
+
+                listenerBackpack.setLatestVersion(this.uuid, this.numberOfPages);
+                sendPageUpdate(this.numberOfPages - 1);
+                listenerBackpack.setLatestVersion(this.uuid, this.numberOfPages);
+
             } else { //Upgrade page
                 if (currentPage == this.numberOfPages) { //If they're on their last page and trying to upgrade it
                     Inventory tempInventory = Bukkit.createInventory(null, inventory.getTopInventory().getSize()); //Already has the added 9 because of control bar
@@ -153,6 +173,10 @@ public class Backpack {
                     this.totalRows += 1;
                 } else { //On a different page than what they're upgrading
                     Inventory tempInventory = Bukkit.createInventory(null, pages.get(this.numberOfPages).getSize() + 9); //Add the new row since this DOESN'T have the control bar
+
+                    ListenerBackpack listenerBackpack = Main.getInstance().getListenerBackpackInstance();
+                    listenerBackpack.setLatestVersion(this.uuid, this.numberOfPages);
+
                     Inventory pageInventory = pages.get(this.numberOfPages);
 
                     for (int i = 0; i < pageInventory.getSize(); i++) {
@@ -165,8 +189,55 @@ public class Backpack {
                     update(this.numberOfPages, tempInventory);
 
                     this.totalRows += 1;
+
+                    sendPageUpdate(this.numberOfPages);
+
+                    listenerBackpack.setLatestVersion(this.uuid, this.numberOfPages);
                 }
             }
+        }
+    }
+
+    private void sendPageUpdate(int page) {
+        // Grab all players that currently have an inventory open
+        Iterator<Map.Entry<Player, InventoryView>> iterator = Main.getInstance().getListenerBackpackInstance().hasBackpackOpen.entrySet().iterator();
+
+        try {
+            // Loop through all players that have an inventory open
+            while (iterator.hasNext()) {
+                Map.Entry<Player, InventoryView> entry = iterator.next();
+
+                Player player = entry.getKey();
+                InventoryView inventory = entry.getValue();
+                String inventoryName = entry.getValue().getTitle();
+
+                if (inventoryName.contains(ChatColor.GRAY + "Backpack")) {
+
+                    UUID inventoryUUID = UUID.fromString(NBTTag.getString(inventory.getTopInventory().getItem(inventory.getTopInventory().getSize() - 5), "player_id"));
+
+                    // Making sure that the Gang ID isn't 0 and that it matches this Gangs ID
+                    if (inventoryUUID.equals(this.uuid)) {
+                        // Remove all letters from the inventory name, split at '/', and grab the first int from the args (Inventory name Ex: 'Vault Page 1/2')
+                        int playerCurrentPage = Integer.parseInt(ChatColor.stripColor(inventoryName).replaceAll("[a-zA-Z]", "").split("/")[0].replaceAll("\\s", ""));
+                        // Make sure that the player has the same page open
+                        if (playerCurrentPage == page) {
+                            // Clear their cursor to prevent dropping the item since we'll be reopening the inventory
+                            ItemStack cursor = player.getOpenInventory().getCursor();
+
+                            if (cursor != null)
+                                player.getOpenInventory().setCursor(new ItemStack(Material.AIR));
+
+                            // Open the newest version of the page
+                            open(playerCurrentPage, player);
+
+                            // Set the players cursor back to what it was
+                            player.getOpenInventory().setCursor(cursor);
+                        }
+                    }
+                }
+            }
+        } catch (ConcurrentModificationException ex) {
+            //TODO
         }
     }
 
@@ -186,15 +257,15 @@ public class Backpack {
         return 0;
     }
 
-    public void open (int page, Player player, boolean admin) {
-        player.openInventory(new BackpackUI(page, this, admin).getInventory());
+    public void open (int page, Player player) {
+        player.openInventory( setUI(page));
     }
 
     public String toString() {
         String string = "";
 
         for (int i = 1; i <= pages.keySet().size(); i++) {
-            string += steralize(pages.get(i));
+            string += sterilize(pages.get(i));
 
             if (i < pages.keySet().size())
                 string += ",";
@@ -207,129 +278,67 @@ public class Backpack {
         List<String> list = new ArrayList<>();
 
         for (Inventory inventory : pages.values())
-            list.add(steralize(inventory));
+            list.add(sterilize(inventory));
 
         return list;
     }
 
-    private static class BackpackUI {
-        private int page;
-        private Backpack backpack;
-        private String ID;
+    private Inventory setUI(int page) { return setUI(getPage(page), page); }
 
-        private Inventory inventory;
+    public Inventory setUI(Inventory inventory, int page) {
+        Inventory ui = Bukkit.createInventory(null, inventory.getSize() + 9, ChatColor.GRAY + "Backpack Page " + page + "/" + this.numberOfPages);
 
-        private ItemStack UPGRADE;
-        private ItemStack NEXT_PAGE;
-        private ItemStack PREV_PAGE;
+        ItemStack PLACE_HOLDER = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
 
-        private ItemStack PLACE_HOLDER = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1); //, (short) 15
+        ItemStack UPGRADE = Utilities.createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Upgrade Backpack Size", new String[] {
+                ChatColor.GRAY + "Click to upgrade backpack size",
+                "",
+                ChatColor.YELLOW + "Current Size:",
+                ChatColor.GRAY + "Rows: " + ChatColor.YELLOW + totalRows,
+                "",
+                ChatColor.GREEN + "Next Size:",
+                ChatColor.GRAY + "Rows: " + ChatColor.GREEN + getNextSize(),
+                "",
+                ChatColor.GRAY + "Cost: " + ChatColor.GOLD + new Utilities().formatEconomy(Long.parseLong(getUpgradeCost() + ""))
+        });
 
-        private boolean admin; //Other user is opening the backpack, so we need to remove the upgrade button and replace it w/ the owners UUID
+        // Set the NBT tag for gang ID onto the 'upgrade' chest
+        UPGRADE = NBTTag.setString(UPGRADE, "id", "upgrade");
+        UPGRADE = NBTTag.setString(UPGRADE, "player_id", getUUID().toString());
 
-        public BackpackUI(int page, Backpack backpack, boolean admin) {
-            this.page = page;
-            this.ID = backpack.getUUID().toString();
-            this.admin = admin;
+        ItemStack NEXT_PAGE = NBTTag.setString(Utilities.createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "Next Page ->", null), "id", "next");
 
-            this.inventory = Bukkit.createInventory(null, backpack.getPage(page).getSize() + 9, ChatColor.GRAY + "Backpack Page " + page + "/" + backpack.numberOfPages);
+        ItemStack PREV_PAGE = NBTTag.setString(Utilities.createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "<- Previous Page", null), "id", "prev");
 
-            if (!admin)
-                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Upgrade Backpack Size", new String[] {
-                        ChatColor.GRAY + "Click to upgrade backpack size",
-                        "",
-                        ChatColor.YELLOW + "Current Size:",
-                        ChatColor.GRAY + "Rows: " + ChatColor.YELLOW + backpack.totalRows,
-                        "",
-                        ChatColor.GREEN + "Next Size:",
-                        ChatColor.GRAY + "Rows: " + ChatColor.GREEN + backpack.getNextSize(),
-                        "",
-                        ChatColor.GRAY + "Cost: " + ChatColor.GOLD + new Utilities().formatEconomy(Long.parseLong(backpack.getUpgradeCost() + ""))
-                });
+        // Set the vault controls on the bottom row of the inventory
+        ItemMeta meta = PLACE_HOLDER.getItemMeta();
+        meta.setDisplayName(ChatColor.GRAY + "Empty");
+        PLACE_HOLDER.setItemMeta(meta);
+
+        int yMod = (ui.getSize() - 9);
+
+        // Set the entire bottom row as place holders then replace with the needed controls
+        for (int i = 0; i < 9; i++)
+            ui.setItem(yMod + i, PLACE_HOLDER);
+
+        ui.setItem(yMod + 4, UPGRADE);
+
+        if (page == getNumberOfPages() && page != 1)
+            ui.setItem(yMod, PREV_PAGE);
+        else if (page < getNumberOfPages() && page > 1) {
+            ui.setItem(yMod + 8, NEXT_PAGE);
+            ui.setItem(yMod, PREV_PAGE);
+        } else if (page < getNumberOfPages())
+            ui.setItem(yMod + 8, NEXT_PAGE);
+
+        // Set the contents of the inventory
+
+        for (int i = 0; i < inventory.getSize(); i++)
+            if (inventory.getItem(i) != null)
+                ui.setItem(i, inventory.getItem(i));
             else
-                this.UPGRADE = createItem(new ItemStack(Material.CHEST), ChatColor.DARK_PURPLE + "Owner: " + this.ID, new String[] {
-                        ChatColor.GRAY + "Name: " + backpack.playerData.getName()
-                });
+                ui.setItem(i, new ItemStack(Material.AIR));
 
-            //this.NEXT_PAGE = new ItemStack(Material.ARROW);
-            //this.PREV_PAGE = new ItemStack(Material.ARROW);
-
-            this.NEXT_PAGE = createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "Next Page ->", null);
-
-            this.PREV_PAGE = createItem(new ItemStack(Material.ARROW), ChatColor.YELLOW + "<- Previous Page", null);
-
-            //Set Controls
-            ItemMeta meta = PLACE_HOLDER.getItemMeta();
-            meta.setDisplayName(ChatColor.GRAY + "Empty");
-            PLACE_HOLDER.setItemMeta(meta);
-
-            int yMod = (inventory.getSize() - 9);
-
-            for (int i = 0; i < 9; i++)
-                this.inventory.setItem(yMod + i, PLACE_HOLDER);
-
-            this.inventory.setItem(yMod + 4, this.UPGRADE);
-
-            if (page == backpack.getNumberOfPages() && page != 1)
-                this.inventory.setItem(yMod, PREV_PAGE);
-            else if (page < backpack.getNumberOfPages() && page > 1) {
-                this.inventory.setItem(yMod + 8, NEXT_PAGE);
-                this.inventory.setItem(yMod, PREV_PAGE);
-            } else if (page < backpack.getNumberOfPages())
-                this.inventory.setItem(yMod + 8, NEXT_PAGE);
-
-            //Set Contents
-            Inventory contents = backpack.getPage(page);
-
-            for (int i = 0; i < backpack.getPage(page).getSize(); i++)
-                if (contents.getItem(i) != null)
-                    inventory.setItem(i, contents.getItem(i));
-                else
-                    inventory.setItem(i, new ItemStack(Material.AIR));
-        }
-
-        public Inventory getInventory() { return inventory; }
-
-        private void setContents() {
-            Inventory contents = backpack.getPage(this.page);
-
-            for (int i = 0; i < backpack.getPage(page).getSize(); i++)
-                if (contents.getItem(i) != null)
-                    inventory.setItem(i, contents.getItem(i));
-                else
-                    inventory.setItem(i, new ItemStack(Material.AIR));
-        }
-
-        private void setControls(Inventory inventory) {
-            ItemMeta meta = PLACE_HOLDER.getItemMeta();
-            meta.setDisplayName(ChatColor.GRAY + "Empty");
-            PLACE_HOLDER.setItemMeta(meta);
-
-            int yMod = (inventory.getSize() / 9) - 1;
-
-            for (int i = 1; i < 10; i++)
-                this.inventory.setItem(yMod + i, PLACE_HOLDER);
-
-            this.inventory.setItem(yMod + 5, this.UPGRADE);
-
-            if (page == backpack.getNumberOfPages() && page != 1)
-                this.inventory.setItem(yMod + 1, PREV_PAGE);
-            else if (page < backpack.getNumberOfPages() && page > 1) {
-                this.inventory.setItem(yMod + 9, NEXT_PAGE);
-                this.inventory.setItem(yMod + 1, PREV_PAGE);
-            } else if (page < backpack.getNumberOfPages())
-                this.inventory.setItem(yMod + 9, NEXT_PAGE);
-        }
-
-        private ItemStack createItem(ItemStack item, String name, String[] lore) {
-            ItemMeta im = item.getItemMeta();
-            im.setDisplayName(name);
-
-            if (lore != null)
-                im.setLore(Arrays.asList(lore));
-
-            item.setItemMeta(im);
-            return item;
-        }
+        return ui;
     }
 }
