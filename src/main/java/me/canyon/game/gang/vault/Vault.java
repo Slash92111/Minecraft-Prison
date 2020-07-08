@@ -236,7 +236,7 @@ public class Vault {
                         update(currentPage, temp);
                 }
 
-                pages.put(this.numberOfPages + 1, Bukkit.createInventory(null, 9, "Backpack Page " + this.numberOfPages + 1));
+                pages.put(this.numberOfPages + 1, Bukkit.createInventory(null, 9, "Vault Page " + this.numberOfPages + 1));
 
                 this.numberOfPages += 1;
                 this.totalRows += 1;
