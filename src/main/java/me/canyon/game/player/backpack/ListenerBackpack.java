@@ -1,7 +1,6 @@
 package me.canyon.game.player.backpack;
 
 import me.canyon.Main;
-import me.canyon.game.gang.Gang;
 import me.canyon.game.item.NBTTag;
 import me.canyon.game.player.PlayerData;
 import org.bukkit.ChatColor;
