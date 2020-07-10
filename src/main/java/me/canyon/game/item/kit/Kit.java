@@ -1,4 +1,4 @@
-package me.canyon.game.item;
+package me.canyon.game.item.kit;
 
 import me.canyon.Main;
 import me.canyon.game.player.PlayerData;
