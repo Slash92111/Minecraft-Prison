@@ -4,6 +4,8 @@ import me.canyon.database.MongoDB;
 import me.canyon.database.Splunk;
 import me.canyon.database.YML;
 import me.canyon.game.World;
+import me.canyon.game.auction.AuctionHouse;
+import me.canyon.game.auction.AuctionListener;
 import me.canyon.game.command.*;
 import me.canyon.game.gang.Gang;
 import me.canyon.game.command.CommandGang;
@@ -54,9 +56,11 @@ public class Main extends JavaPlugin {
     private MongoDB mongoDB;
     private Splunk splunk;
     private Kit kit;
+    private AuctionHouse auctionHouse;
 
     private ListenerVault listenerVault;
     private ListenerBackpack listenerBackpack;
+    private AuctionListener auctionListener;
     private StaffUI staffUI;
 
     public void onEnable() {
@@ -72,14 +76,16 @@ public class Main extends JavaPlugin {
         punishmentConfig = new YML(this, "punishment").getConfig();
         defaultsConfig = new YML(this, "defaults").getConfig();
 
-
         mongoDB = new MongoDB(this);
         splunk = new Splunk(this);
         kit = new Kit(this);
 
         listenerVault = new ListenerVault(this);
         listenerBackpack = new ListenerBackpack(this);
+        auctionListener = new AuctionListener(this);
         staffUI = new StaffUI(this);
+
+        auctionHouse = new AuctionHouse(this);
 
         CommandManager commandManager = new CommandManager();
 
@@ -106,6 +112,7 @@ public class Main extends JavaPlugin {
         commandManager.registerCommand(new CommandToggle("toggle", "/command", "Opens the toggle UI"));
         commandManager.registerCommand(new CommandFriend("friend", "/command", "Manage friends list"));
         commandManager.registerCommand(new CommandPay("pay", "/pay PLAYER AMOUNT", "Send another player money in-game."));
+        commandManager.registerCommand(new CommandAuction("auction", "/auction", "Opens AH"));
 
         for (Rank rank : Rank.values())
             commandManager.registerCommand(new CommandRanks(rank.toString().toLowerCase(), "/<command> [args]", "Manage rank data", 3));
@@ -124,6 +131,7 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new KitListener(this), this);
         getServer().getPluginManager().registerEvents(new ToggleListener(this), this);
         getServer().getPluginManager().registerEvents(new StaffListener(this), this);
+        getServer().getPluginManager().registerEvents(auctionListener, this);
     }
 
     public void onDisable() {
@@ -258,9 +266,13 @@ public class Main extends JavaPlugin {
 
     public Kit getKitInstance() { return kit; }
 
+    public AuctionHouse getAuctionHouseInstance() { return auctionHouse; }
+
     public ListenerVault getListenerVaultInstance() { return listenerVault; }
 
     public ListenerBackpack getListenerBackpackInstance() { return listenerBackpack; }
+
+    public AuctionListener getAuctionListenerInstance() { return auctionListener; }
 
     public StaffUI getStaffUI() { return staffUI; }
 
