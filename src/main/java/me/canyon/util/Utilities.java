@@ -6,8 +6,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class Utilities {
@@ -21,6 +27,45 @@ public class Utilities {
 
         item.setItemMeta(im);
         return item;
+    }
+
+    public static ItemStack addLore(ItemStack item, String[] lore) {
+        ItemMeta im = item.getItemMeta();
+
+        if (lore != null)
+            if (im.getLore() != null) {
+                List<String> itemLore = im.getLore();
+                itemLore.addAll(Arrays.asList(lore));
+                im.setLore(itemLore);
+            } else
+                im.setLore(Arrays.asList(lore));
+
+        item.setItemMeta(im);
+        return item;
+    }
+
+    public static String sterilize(ItemStack item) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+
+            dataOutput.writeObject(item);
+
+            return Base64Coder.encodeLines(outputStream.toByteArray());
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to save item stacks!", e);
+        }
+    }
+
+    public static ItemStack deserialize(String string) {
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(string));
+            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+
+            return (ItemStack) dataInput.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to convert a string to an itemstack!", e);
+        }
     }
 
     public static int getRandomNumber(int min, int max) {
