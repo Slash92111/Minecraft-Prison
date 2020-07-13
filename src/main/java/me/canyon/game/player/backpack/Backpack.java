@@ -94,10 +94,8 @@ public class Backpack {
             dataInput.close();
 
             return inventory;
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         return null;
