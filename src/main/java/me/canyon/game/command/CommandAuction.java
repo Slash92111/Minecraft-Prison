@@ -33,8 +33,10 @@ public class CommandAuction extends BaseCommand {
                 if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
                     return false;
 
-                plugin.getAuctionHouseInstance().create(player.getUniqueId(), player.getName(), player.getInventory().getItemInMainHand());
-                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                if (args.length < 2)
+                    return false;
+
+                plugin.getAuctionHouseInstance().create(player.getUniqueId(), player.getName(), player.getInventory().getItemInMainHand(), Long.parseLong(args[1]));
                 break;
             case "test":
                 break;

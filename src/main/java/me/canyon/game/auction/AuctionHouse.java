@@ -2,6 +2,7 @@ package me.canyon.game.auction;
 
 import me.canyon.Main;
 import me.canyon.game.item.NBTTag;
+import me.canyon.game.player.PlayerData;
 import me.canyon.util.Utilities;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -102,11 +103,11 @@ public class AuctionHouse {
     }
 
     Inventory confirmBuy(int auctionID) {
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "" + ChatColor.BOLD +  "CONFIRM PURCHASE");
+        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "CONFIRM PURCHASE");
 
         Auction auction = this.items.get(auctionID);
 
-        ItemStack CONFIRM = Utilities.createItem(new ItemStack(Material.GREEN_STAINED_GLASS_PANE),  ChatColor.GREEN + "" + ChatColor.BOLD + "CONFIRM", new String[]{
+        ItemStack CONFIRM = Utilities.createItem(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), ChatColor.GREEN + "" + ChatColor.BOLD + "CONFIRM", new String[]{
                 " ",
                 ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "$" + auction.getCost(),
                 ChatColor.GRAY + "Amount: " + ChatColor.GOLD + "1", //TODO change to support amount
@@ -118,7 +119,7 @@ public class AuctionHouse {
         CONFIRM = NBTTag.setString(CONFIRM, "id", "confirm");
         CONFIRM = NBTTag.setInteger(CONFIRM, "auction_id", auctionID);
 
-        ItemStack CANCEL = Utilities.createItem(new ItemStack(Material.RED_STAINED_GLASS_PANE), ChatColor.RED + "" + ChatColor.BOLD +  "CANCEL", new String[]{
+        ItemStack CANCEL = Utilities.createItem(new ItemStack(Material.RED_STAINED_GLASS_PANE), ChatColor.RED + "" + ChatColor.BOLD + "CANCEL", new String[]{
                 " ",
                 ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "$" + auction.getCost(),
                 ChatColor.GRAY + "Amount: " + ChatColor.GOLD + "1", //TODO change to support amount
@@ -179,13 +180,25 @@ public class AuctionHouse {
         return this.items.get(id);
     }
 
-    public void create(UUID ownerID, String ownerIGN, ItemStack item) {
-        int id = Utilities.getRandomNumber(1, 1000); //TODO replace
-        items.put(id, new Auction(id, item, ownerID, ownerIGN, new Date(), 10, true));
+    public void create(UUID ownerID, String ownerIGN, ItemStack item, Long cost) {
+        PlayerData playerData = plugin.getPlayerData(ownerID);
+
+        if (playerData.getTotalAuctions() < playerData.getMaxAuctions()) {
+            int id = Utilities.getRandomNumber(1, 1000); //TODO replace
+            Date expiration = new Date((new Date()).getTime() + playerData.getAuctionExpiration());
+
+            items.put(id, new Auction(id, item, ownerID, ownerIGN, expiration, cost, true));
+            playerData.setTotalAuctions(playerData.getTotalAuctions() + 1);
+
+            playerData.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        } else
+            playerData.getPlayer().sendMessage(ChatColor.RED + "To many auctions, not enough space you dumb cunt"); //TODO change to message.yml
     }
 
     public void remove(int id) {
+        plugin.getPlayerData(this.items.get(id).getOwnerID()).setTotalAuctions(plugin.getPlayerData(this.items.get(id).getOwnerID()).getTotalAuctions() - 1);
         this.items.get(id).removeFromDatabase();
         this.items.remove(id);
+
     }
 }

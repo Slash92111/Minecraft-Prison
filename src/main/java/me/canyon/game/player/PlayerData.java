@@ -27,13 +27,13 @@ public class PlayerData {
     private Player player;
     private UUID id;
     private String ign, nickname, ip, tempBanReason, tempBanByWho, muteReason, permBanReason, permBanByWho, discordID;
-    private Long balance, xp, level, prestige;
+    private Long balance, xp, level, prestige, auctionExpiration;
     private long playTime;
-    private Date lastLogin,ban,mute;
+    private Date lastLogin, ban, mute;
     private Rank rank;
     private Staff staff;
     private boolean permBan;
-    private int totalBackpackRows, maxBackpackRows, hardcapBackpackRows, gangID, maxHomes, totalHomes;
+    private int totalBackpackRows, maxBackpackRows, hardcapBackpackRows, gangID, maxHomes, totalHomes, totalAuctions, maxAuctions;
     private Backpack backpack;
     private List<String> backpackList, toggleList;
     private List<Gang> gangInvites = new ArrayList<>(); //NOT saved to database
@@ -97,6 +97,9 @@ public class PlayerData {
         this.totalHomes = playerDocument.getInteger("HOMES_TOTAL");
         this.toggleList = playerDocument.getList("TOGGLE", String.class);
         this.toggle = new Toggle(this);
+        this.maxAuctions = playerDocument.getInteger("AUCTION_MAX");
+        this.totalAuctions = playerDocument.getInteger("AUCTION_TOTAL");
+        this.auctionExpiration = playerDocument.getLong("AUCTION_EXPIRATION");
 
         if (!plugin.hasGangData(this.gangID)) //load the gang if it's not already loaded
             new Gang(gangID);
@@ -198,6 +201,9 @@ public class PlayerData {
                document.append("KIT_LEVELS", new ArrayList<String>());
                document.append("TOGGLE", new ArrayList<String>());
                document.append("FRIENDS", new ArrayList<String>());
+               document.append("AUCTION_MAX", 1);
+               document.append("AUCTION_TOTAL", 0);
+               document.append("AUCTION_EXPIRATION", 28800000L); // 8 hours
 
                mongoDB.insertDocument(document);
 
@@ -612,4 +618,16 @@ public class PlayerData {
     public void removePendingFriend(Player friend) {
         this.pendingFriends.remove(friend);
     }
+
+    public int getMaxAuctions() { return this.maxAuctions; }
+
+    public void setMaxAuctions(int maxAuctions) { this.maxAuctions = maxAuctions; }
+
+    public int getTotalAuctions() { return this.totalAuctions; }
+
+    public void setTotalAuctions(int totalAuctions) { this.totalAuctions = totalAuctions; }
+
+    public Long getAuctionExpiration() { return this.auctionExpiration; }
+
+    public void setAuctionExpiration(Long auctionExpiration) { this.auctionExpiration = auctionExpiration; }
 }
