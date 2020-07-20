@@ -4,6 +4,7 @@
 /target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 /target/*
 /src/main/resources/PlayerDefaults.yml
+/src/main/resources/database.yml
 /Minecraft.iml
 /.idea/uiDesigner.xml
 /.idea/vcs.xml
