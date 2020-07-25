@@ -20,7 +20,8 @@ public enum ToggleEnum { //Descriptions will start will "You'll" if on and "You 
     TRADE_REQUESTS("tradeRequest", "Trade Requests"),
     GANG_CHAT("gangChat", "Gang Chat"),
     FRIEND_REQUESTS("friendRequets", "Friend Requests"),
-    FRIEND_LOGIN_ALERT("friendLoginAlert", "Friend Login Alerts");
+    FRIEND_LOGIN_ALERT("friendLoginAlert", "Friend Login Alerts"),
+    STREAMER_MODE("streamerMode", "Streamer Mode");
 
     private String name, id;
 
